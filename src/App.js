@@ -12,27 +12,13 @@ import GithubState from './context/github/GithubState'
 
 const App = () => {
 
-  const [users, setUsers] = useState([]);
-  const [user, setUser] = useState({});
+
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
   const [repos, setRepos] = useState([]);
 
 
- const searchUsers = async text => {
-    setLoading(true);
-    const res = await axios.get(`https://api.github.com/search/users?q=${text}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
-
-    setUsers(res.data.items);
-    setLoading(false);
-  }
-
-  const getUser = async (username) => {
-    setLoading(true);
-    const res = await axios.get(`https://api.github.com/users/${username}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
-    setUser(res.data);
-    setLoading(false);
-  }
+  
 
   const getUserRepos = async (username) => {
     setLoading(true);
@@ -41,10 +27,6 @@ const App = () => {
     setLoading(false);
   }
 
-  const clearUsers = () => {
-    setUsers([]);
-    setLoading(false);
-  }
 
   const showAlert = (msg, type) => {
     setAlert({msg,type});
@@ -63,18 +45,15 @@ const App = () => {
           <Route exact path='/' render={props => (
             <Fragment>
                <Search 
-                searchUsers={searchUsers} 
-                clearUsers={clearUsers} 
-                showClear={users.length > 0 ? true: false} 
                 setAlert={showAlert}/>
             </Fragment>
           )} />
           <Route exact path="/about" component={About} />
           <Route exact path="/user/:login" render={props => (
-            <User {...props} getUser={getUser} user={user} loading={loading} getUserRepos={getUserRepos} repos={repos}/>
+            <User {...props} getUserRepos={getUserRepos} repos={repos}/>
           )} />
         </Switch>
-        <Users loading={loading} users={users}/>
+        <Users />
       </div>
     </div>
     </Router>
